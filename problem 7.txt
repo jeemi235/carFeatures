@@ -1,0 +1,96 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Create database cardb;
+
+Table creation Queries
+
+--create table for features
+create table features(id int primary key default nextval('feature_seq'),
+name string not null unique);
+
+
+--create table for details
+create table car (id int primary key default nextval('car_seq'),
+name string not null,
+code varchar(5) not null unique,
+color string not null);
+
+
+//relation table
+create table relation(id int primary key default nextval('rel_seq'),
+car_id int references car(id),
+feature_id int references features(id),
+unique(car_id,feature_id));
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+1.Add new car to the list w/o features
+insert
+	into
+	car(name,code,color)
+values(
+'Thar',
+'9hg41',
+'black');
+--------------------------------------------------------------------------------------------------------------
+
+2.Update car details like name or code or color. 
+update car set color='blue'
+where id=3;
+--------------------------------------------------------------------------------------------------------------
+
+3. Add/Remove features in car. 
+insert into relation (car_id,feature_id)
+values(10,7);
+
+delete from relation where car_id=4 and feature_id =4;
+--------------------------------------------------------------------------------------------------------------
+
+4.Filter cars by given features. For example, if the user wants to find a car by the engine S8 
+and engine S6, then the user will get all the car list which have engine S8 or S6. 
+select
+	car.id ,
+	car."name" ,
+	car.code ,
+	car.color ,
+	features."name" 
+from car
+left join relation on
+	relation.car_id = car.id
+left join features on
+	features.id = relation.feature_id
+where
+	features.id in (1, 5)
+and car.color='red';
+--------------------------------------------------------------------------------------------------------------
+
+5.Filter cars by colors.  
+ select * from car where color ='white';
+--------------------------------------------------------------------------------------------------------------
+
+6.Get car details along with its features 
+select
+	car.id ,
+	car."name" ,
+	car.code ,
+	car.color,
+	features.id,
+	features.name
+from
+	car
+left join relation on
+	relation.car_id = car.id
+left join features on
+	features.id = relation.feature_id
+where
+	features.id is not null
+	and features.name is not null
+order by
+	car_id;
+--------------------------------------------------------------------------------------------------------------
+
+7.Search car by name 
+select * from car where name='swift';
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
